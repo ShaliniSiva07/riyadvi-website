@@ -36,12 +36,21 @@ function CTASection() {
           </Link>
 
           {/* Contact Us */}
-          <Link
-            to="/contact"
-            className="rounded-full border border-white/20 px-8 py-4 font-semibold text-white transition duration-300 hover:border-[#D4AF37] hover:text-[#D4AF37]"
-          >
-            Contact Us
-          </Link>
+{/* Contact Us */}
+<Link
+  to="/contact"
+  className="rounded-full border border-white/20 px-8 py-4 font-semibold text-white transition duration-300 hover:border-[#D4AF37] hover:text-[#D4AF37]"
+>
+  Contact Us
+</Link>
+
+{/* Business Health Checkup */}
+<Link
+  to="/business-health-checkup"
+  className="rounded-full border border-[#D4AF37] px-8 py-4 font-semibold text-[#D4AF37] transition duration-300 hover:bg-[#D4AF37] hover:text-black"
+>
+  Business Health Checkup
+</Link>
 
         </div>
 
