@@ -41,23 +41,23 @@ function AdminDashboard() {
         healthCheckupsResponse,
         leadMagnetsResponse,
       ] = await Promise.all([
-        fetch("${API_URL}/api/admin/contacts", {
+        fetch(`${API_URL}/api/admin/contacts`, {
           headers,
         }),
 
-        fetch("${API_URL}/api/admin/consultations", {
+        fetch(`${API_URL}/api/admin/contacts`, {
           headers,
         }),
 
-        fetch("${API_URL}/api/admin/applications", {
+        fetch(`${API_URL}/api/admin/contacts`, {
           headers,
         }),
 
-        fetch("${API_URL}/api/admin/health-checkups", {
+        fetch(`${API_URL}/api/admin/contacts`, {
           headers,
         }),
 
-        fetch("${API_URL}/api/admin/lead-magnets", {
+        fetch(`${API_URL}/api/admin/contacts`, {
           headers,
         }),
       ]);
