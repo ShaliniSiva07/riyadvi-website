@@ -40,27 +40,27 @@ function AdminDashboard() {
         applicationsResponse,
         healthCheckupsResponse,
         leadMagnetsResponse,
-      ] = await Promise.all([
-        fetch(`${API_URL}/api/admin/contacts`, {
-          headers,
-        }),
+     ] = await Promise.all([
+  fetch(`${API_URL}/api/admin/contacts`, {
+    headers,
+  }),
 
-        fetch(`${API_URL}/api/admin/contacts`, {
-          headers,
-        }),
+  fetch(`${API_URL}/api/admin/consultations`, {
+    headers,
+  }),
 
-        fetch(`${API_URL}/api/admin/contacts`, {
-          headers,
-        }),
+  fetch(`${API_URL}/api/admin/applications`, {
+    headers,
+  }),
 
-        fetch(`${API_URL}/api/admin/contacts`, {
-          headers,
-        }),
+  fetch(`${API_URL}/api/admin/health-checkups`, {
+    headers,
+  }),
 
-        fetch(`${API_URL}/api/admin/contacts`, {
-          headers,
-        }),
-      ]);
+  fetch(`${API_URL}/api/admin/lead-magnets`, {
+    headers,
+  }),
+]);
 
       if (
         contactsResponse.status === 401 ||
