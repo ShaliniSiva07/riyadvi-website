@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
+const { put } = require("@vercel/blob");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -25,19 +26,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-/* Multer Configuration */
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-
-  filename: (req, file, cb) => {
-    const uniqueName = Date.now() + "-" + file.originalname;
-    cb(null, uniqueName);
-  },
-});
-
-const upload = multer({ storage });
+const upload = multer({ storage: multer.memoryStorage() });
 
 /* Test API */
 app.get("/", (req, res) => {
@@ -132,10 +121,20 @@ app.post(
         coverLetter,
       } = req.body;
 
-      const resume = req.file
-        ? req.file.filename
-        : "";
+     let resume = "";
 
+if (req.file) {
+  const blob = await put(
+    `resumes/${Date.now()}-${req.file.originalname}`,
+    req.file.buffer,
+    {
+      access: "private",
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+    }
+  );
+
+  resume = blob.url;
+}
       const application = await Application.create({
         jobTitle,
         fullName,
