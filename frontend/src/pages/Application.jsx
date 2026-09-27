@@ -41,7 +41,7 @@ function Application() {
       }
 
       const response = await fetch(
-        "http://localhost:5000/api/applications",
+        "https://riyadvi-website-backend.vercel.app/api/applications",
         {
           method: "POST",
           body: data,

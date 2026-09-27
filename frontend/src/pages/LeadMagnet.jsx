@@ -1,4 +1,5 @@
 import { useState } from "react";
+import API_URL from "../api";
 
 function LeadMagnet() {
   const [formData, setFormData] = useState({
@@ -22,15 +23,13 @@ function LeadMagnet() {
     event.preventDefault();
 
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/lead-magnet",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
+      const response = await fetch(`${API_URL}/api/lead-magnet`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      }
       );
 
       const data = await response.json();
@@ -46,7 +45,7 @@ function LeadMagnet() {
       } else {
         alert(
           data.message ||
-            "Failed to submit lead magnet request."
+          "Failed to submit lead magnet request."
         );
       }
     } catch (error) {

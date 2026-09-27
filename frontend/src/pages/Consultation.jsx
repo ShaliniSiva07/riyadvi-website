@@ -1,4 +1,5 @@
 import { useState } from "react";
+import API_URL from "../api";
 
 function Consultation() {
   const [formData, setFormData] = useState({
@@ -28,15 +29,13 @@ function Consultation() {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/consultation",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
+      const response = await fetch(`${API_URL}/api/consultation`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      }
       );
 
       const data = await response.json();
@@ -55,7 +54,7 @@ function Consultation() {
       } else {
         alert(
           data.message ||
-            "Failed to submit consultation request."
+          "Failed to submit consultation request."
         );
       }
     } catch (error) {

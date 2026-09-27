@@ -1,4 +1,5 @@
 import { useState } from "react";
+import API_URL from "../api";
 
 function BusinessHealthCheckup() {
   const [step, setStep] = useState(1);
@@ -47,15 +48,13 @@ function BusinessHealthCheckup() {
     event.preventDefault();
 
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/health-checkup",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
+      const response = await fetch(`${API_URL}/api/health-checkup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      }
       );
 
       const data = await response.json();
@@ -76,7 +75,7 @@ function BusinessHealthCheckup() {
       } else {
         alert(
           data.message ||
-            "Failed to submit business health checkup."
+          "Failed to submit business health checkup."
         );
       }
     } catch (error) {

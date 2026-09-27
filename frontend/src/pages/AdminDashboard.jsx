@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_URL from "../api";
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -40,23 +41,23 @@ function AdminDashboard() {
         healthCheckupsResponse,
         leadMagnetsResponse,
       ] = await Promise.all([
-        fetch("http://localhost:5000/api/admin/contacts", {
+        fetch("${API_URL}/api/admin/contacts", {
           headers,
         }),
 
-        fetch("http://localhost:5000/api/admin/consultations", {
+        fetch("${API_URL}/api/admin/consultations", {
           headers,
         }),
 
-        fetch("http://localhost:5000/api/admin/applications", {
+        fetch("${API_URL}/api/admin/applications", {
           headers,
         }),
 
-        fetch("http://localhost:5000/api/admin/health-checkups", {
+        fetch("${API_URL}/api/admin/health-checkups", {
           headers,
         }),
 
-        fetch("http://localhost:5000/api/admin/lead-magnets", {
+        fetch("${API_URL}/api/admin/lead-magnets", {
           headers,
         }),
       ]);
@@ -160,44 +161,44 @@ function AdminDashboard() {
   return (
     <main className="min-h-screen bg-black px-6 pb-24 pt-40 text-white">
       <div className="mx-auto max-w-7xl">
-{/* Header */}
+        {/* Header */}
 
-<div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-  <div>
-    <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#D4AF37]">
-      Riyadvi Administration
-    </p>
+        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#D4AF37]">
+              Riyadvi Administration
+            </p>
 
-    <h1 className="mt-5 text-5xl font-bold md:text-6xl">
-      Admin
-      <span className="text-[#D4AF37]">
-        {" "}Dashboard
-      </span>
-    </h1>
+            <h1 className="mt-5 text-5xl font-bold md:text-6xl">
+              Admin
+              <span className="text-[#D4AF37]">
+                {" "}Dashboard
+              </span>
+            </h1>
 
-    <p className="mt-5 max-w-2xl leading-8 text-gray-400">
-      Manage enquiries, consultation requests, career applications,
-      business health checkups, and lead magnet submissions.
-    </p>
-  </div>
+            <p className="mt-5 max-w-2xl leading-8 text-gray-400">
+              Manage enquiries, consultation requests, career applications,
+              business health checkups, and lead magnet submissions.
+            </p>
+          </div>
 
-  <div className="flex flex-wrap gap-4">
-    <button
-      onClick={fetchAdminData}
-      disabled={loading}
-      className="border border-[#D4AF37] px-6 py-3 font-semibold text-[#D4AF37] transition duration-300 hover:bg-[#D4AF37] hover:text-black disabled:cursor-not-allowed disabled:opacity-50"
-    >
-      {loading ? "Refreshing..." : "Refresh Data ↻"}
-    </button>
+          <div className="flex flex-wrap gap-4">
+            <button
+              onClick={fetchAdminData}
+              disabled={loading}
+              className="border border-[#D4AF37] px-6 py-3 font-semibold text-[#D4AF37] transition duration-300 hover:bg-[#D4AF37] hover:text-black disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {loading ? "Refreshing..." : "Refresh Data ↻"}
+            </button>
 
-    <button
-      onClick={handleLogout}
-      className="border border-red-500/50 px-6 py-3 font-semibold text-red-400 transition duration-300 hover:bg-red-500 hover:text-white"
-    >
-      Logout
-    </button>
-  </div>
-</div>
+            <button
+              onClick={handleLogout}
+              className="border border-red-500/50 px-6 py-3 font-semibold text-red-400 transition duration-300 hover:bg-red-500 hover:text-white"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
         {/* Loading */}
 
         {loading && (

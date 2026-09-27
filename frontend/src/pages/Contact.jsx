@@ -1,4 +1,5 @@
 import { useState } from "react";
+import API_URL from "../api";
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -22,15 +23,13 @@ function Contact() {
     event.preventDefault();
 
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/contact",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
+      const response = await fetch(`${API_URL}/api/contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      }
       );
 
       const data = await response.json();
@@ -46,7 +45,7 @@ function Contact() {
       } else {
         alert(
           data.message ||
-            "Failed to send your enquiry."
+          "Failed to send your enquiry."
         );
       }
     } catch (error) {
