@@ -1,9 +1,10 @@
+require("dotenv").config({ path: ".env.local" });
 require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
-const { put } = require("@vercel/blob");
+const { put, get } = require("@vercel/blob");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -19,10 +20,8 @@ const Admin = require("./models/Admin");
 const authMiddleware = require("./middleware/authMiddleware");
 
 const app = express();
-
 const PORT = process.env.PORT || 5000;
 
-/* Middleware */
 app.use(cors());
 app.use(express.json());
 
@@ -30,25 +29,14 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 /* Test API */
 app.get("/", (req, res) => {
-  res.json({
-    message: "Riyadvi backend server is running!",
-  });
+  res.json({ message: "Riyadvi backend server is running!" });
 });
 
 /* Contact API */
 app.post("/api/contact", async (req, res) => {
   try {
-    const {
-      name,
-      email,
-      message,
-    } = req.body;
-
-    const contact = await Contact.create({
-      name,
-      email,
-      message,
-    });
+    const { name, email, message } = req.body;
+    const contact = await Contact.create({ name, email, message });
 
     res.status(201).json({
       success: true,
@@ -56,11 +44,7 @@ app.post("/api/contact", async (req, res) => {
       data: contact,
     });
   } catch (error) {
-    console.error(
-      "Contact API error:",
-      error.message
-    );
-
+    console.error("Contact API error:", error.message);
     res.status(500).json({
       success: false,
       message: "Failed to save contact enquiry.",
@@ -71,14 +55,7 @@ app.post("/api/contact", async (req, res) => {
 /* Consultation API */
 app.post("/api/consultation", async (req, res) => {
   try {
-    const {
-      name,
-      email,
-      phone,
-      company,
-      service,
-      message,
-    } = req.body;
+    const { name, email, phone, company, service, message } = req.body;
 
     const consultation = await Consultation.create({
       name,
@@ -95,11 +72,7 @@ app.post("/api/consultation", async (req, res) => {
       data: consultation,
     });
   } catch (error) {
-    console.error(
-      "Consultation API error:",
-      error.message
-    );
-
+    console.error("Consultation API error:", error.message);
     res.status(500).json({
       success: false,
       message: "Failed to submit consultation request.",
@@ -108,72 +81,55 @@ app.post("/api/consultation", async (req, res) => {
 });
 
 /* Career Application API */
-app.post(
-  "/api/applications",
-  upload.single("resume"),
-  async (req, res) => {
-    try {
-      const {
-        jobTitle,
-        fullName,
-        email,
-        phone,
-        coverLetter,
-      } = req.body;
+app.post("/api/applications", upload.single("resume"), async (req, res) => {
+  try {
+    const { jobTitle, fullName, email, phone, coverLetter } = req.body;
+    let resume = "";
 
-     let resume = "";
+    if (req.file) {
 
-if (req.file) {
-  const blob = await put(
-    `resumes/${Date.now()}-${req.file.originalname}`,
-    req.file.buffer,
-    {
-      access: "private",
-      token: process.env.BLOB_READ_WRITE_TOKEN,
-    }
-  );
-
-  resume = blob.url;
-}
-      const application = await Application.create({
-        jobTitle,
-        fullName,
-        email,
-        phone,
-        resume,
-        coverLetter,
-      });
-
-      res.status(201).json({
-        success: true,
-        message: "Job application submitted successfully!",
-        data: application,
-      });
-    } catch (error) {
-      console.error(
-        "Application API error:",
-        error.message
+      const safeFilename = req.file.originalname.replace(
+        /[^a-zA-Z0-9._-]/g,
+        "_"
       );
 
-      res.status(500).json({
-        success: false,
-        message: "Failed to submit job application.",
-      });
+      const blob = await put(
+        `resumes/${Date.now()}-${req.file.originalname}`,
+        req.file.buffer,
+        {
+          access: "private",
+        }
+      );
+      resume = blob.url;
     }
+
+    const application = await Application.create({
+      jobTitle,
+      fullName,
+      email,
+      phone,
+      resume,
+      coverLetter,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Job application submitted successfully!",
+      data: application,
+    });
+  } catch (error) {
+    console.error("Application API error:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to submit job application.",
+    });
   }
-);
+});
 
 /* Business Health Checkup API */
 app.post("/api/health-checkup", async (req, res) => {
   try {
-    const {
-      name,
-      email,
-      company,
-      website,
-      industry,
-      challenge,
-    } = req.body;
+    const { name, email, company, website, industry, challenge } = req.body;
 
     const healthCheckup = await HealthCheckup.create({
       name,
@@ -186,20 +142,14 @@ app.post("/api/health-checkup", async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message:
-        "Business health checkup submitted successfully!",
+      message: "Business health checkup submitted successfully!",
       data: healthCheckup,
     });
   } catch (error) {
-    console.error(
-      "Health Checkup API error:",
-      error.message
-    );
-
+    console.error("Health Checkup API error:", error.message);
     res.status(500).json({
       success: false,
-      message:
-        "Failed to submit business health checkup.",
+      message: "Failed to submit business health checkup.",
     });
   }
 });
@@ -207,11 +157,7 @@ app.post("/api/health-checkup", async (req, res) => {
 /* Lead Magnet API */
 app.post("/api/lead-magnet", async (req, res) => {
   try {
-    const {
-      name,
-      email,
-      company,
-    } = req.body;
+    const { name, email, company } = req.body;
 
     const leadMagnet = await LeadMagnet.create({
       name,
@@ -221,20 +167,14 @@ app.post("/api/lead-magnet", async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message:
-        "Lead magnet request submitted successfully!",
+      message: "Lead magnet request submitted successfully!",
       data: leadMagnet,
     });
   } catch (error) {
-    console.error(
-      "Lead Magnet API error:",
-      error.message
-    );
-
+    console.error("Lead Magnet API error:", error.message);
     res.status(500).json({
       success: false,
-      message:
-        "Failed to submit lead magnet request.",
+      message: "Failed to submit lead magnet request.",
     });
   }
 });
@@ -272,15 +212,21 @@ app.post("/api/admin/login", async (req, res) => {
       });
     }
 
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET is missing.");
+      return res.status(500).json({
+        success: false,
+        message: "Server authentication is not configured.",
+      });
+    }
+
     const token = jwt.sign(
       {
         adminId: admin._id,
         username: admin.username,
       },
       process.env.JWT_SECRET,
-      {
-        expiresIn: "1h",
-      }
+      { expiresIn: "1h" }
     );
 
     res.json({
@@ -289,11 +235,7 @@ app.post("/api/admin/login", async (req, res) => {
       token,
     });
   } catch (error) {
-    console.error(
-      "Admin Login API error:",
-      error.message
-    );
-
+    console.error("Admin Login API error:", error.message);
     res.status(500).json({
       success: false,
       message: "Failed to login.",
@@ -301,150 +243,157 @@ app.post("/api/admin/login", async (req, res) => {
   }
 });
 
-/* Admin APIs */
+/* Download Career Resume */
+app.get(
+  "/api/admin/applications/:id/resume",
+  authMiddleware,
+  async (req, res) => {
+    try {
+      const application = await Application.findById(req.params.id);
+
+      if (!application) {
+        return res.status(404).json({
+          success: false,
+          message: "Application not found.",
+        });
+      }
+
+      if (!application.resume) {
+        return res.status(404).json({
+          success: false,
+          message: "No resume uploaded for this application.",
+        });
+      }
+
+      
+      const blob = await get(application.resume, {
+        access: "private",
+      });
+
+      if (!blob || blob.statusCode !== 200) {
+        return res.status(404).json({
+          success: false,
+          message: "Resume not found.",
+        });
+      }
+
+      res.setHeader(
+        "Content-Type",
+        blob.blob.contentType || "application/octet-stream"
+      );
+
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="resume-${application._id}.pdf"`
+      );
+
+      const reader = blob.stream.getReader();
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) break;
+
+          if (!res.write(Buffer.from(value))) {
+            await new Promise((resolve) =>
+              res.once("drain", resolve)
+            );
+          }
+        }
+
+        res.end();
+      } finally {
+        reader.releaseLock();
+      }
+    } catch (error) {
+      console.error("Resume download error:", error.message);
+
+      if (!res.headersSent) {
+        res.status(500).json({
+          success: false,
+          message: "Failed to download resume.",
+        });
+      } else {
+        res.end();
+      }
+    }
+  }
+);
 
 /* Get Contact Enquiries */
-app.get(
-  "/api/admin/contacts",
-  authMiddleware,
-  async (req, res) => {
-    try {
-      const contacts = await Contact.find()
-        .sort({ createdAt: -1 });
-
-      res.json({
-        success: true,
-        data: contacts,
-      });
-    } catch (error) {
-      console.error(
-        "Admin Contacts API error:",
-        error.message
-      );
-
-      res.status(500).json({
-        success: false,
-        message: "Failed to fetch contact enquiries.",
-      });
-    }
+app.get("/api/admin/contacts", authMiddleware, async (req, res) => {
+  try {
+    const contacts = await Contact.find().sort({ createdAt: -1 });
+    res.json({ success: true, data: contacts });
+  } catch (error) {
+    console.error("Admin Contacts API error:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch contact enquiries.",
+    });
   }
-);
+});
 
 /* Get Consultation Requests */
-app.get(
-  "/api/admin/consultations",
-  authMiddleware,
-  async (req, res) => {
-    try {
-      const consultations = await Consultation.find()
-        .sort({ createdAt: -1 });
-
-      res.json({
-        success: true,
-        data: consultations,
-      });
-    } catch (error) {
-      console.error(
-        "Admin Consultations API error:",
-        error.message
-      );
-
-      res.status(500).json({
-        success: false,
-        message: "Failed to fetch consultation requests.",
-      });
-    }
+app.get("/api/admin/consultations", authMiddleware, async (req, res) => {
+  try {
+    const consultations = await Consultation.find().sort({ createdAt: -1 });
+    res.json({ success: true, data: consultations });
+  } catch (error) {
+    console.error("Admin Consultations API error:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch consultation requests.",
+    });
   }
-);
+});
 
 /* Get Career Applications */
-app.get(
-  "/api/admin/applications",
-  authMiddleware,
-  async (req, res) => {
-    try {
-      const applications = await Application.find()
-        .sort({ createdAt: -1 });
-
-      res.json({
-        success: true,
-        data: applications,
-      });
-    } catch (error) {
-      console.error(
-        "Admin Applications API error:",
-        error.message
-      );
-
-      res.status(500).json({
-        success: false,
-        message: "Failed to fetch applications.",
-      });
-    }
+app.get("/api/admin/applications", authMiddleware, async (req, res) => {
+  try {
+    const applications = await Application.find().sort({ createdAt: -1 });
+    res.json({ success: true, data: applications });
+  } catch (error) {
+    console.error("Admin Applications API error:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch applications.",
+    });
   }
-);
+});
 
 /* Get Business Health Checkups */
-app.get(
-  "/api/admin/health-checkups",
-  authMiddleware,
-  async (req, res) => {
-    try {
-      const healthCheckups = await HealthCheckup.find()
-        .sort({ createdAt: -1 });
-
-      res.json({
-        success: true,
-        data: healthCheckups,
-      });
-    } catch (error) {
-      console.error(
-        "Admin Health Checkups API error:",
-        error.message
-      );
-
-      res.status(500).json({
-        success: false,
-        message: "Failed to fetch health checkups.",
-      });
-    }
+app.get("/api/admin/health-checkups", authMiddleware, async (req, res) => {
+  try {
+    const healthCheckups = await HealthCheckup.find().sort({ createdAt: -1 });
+    res.json({ success: true, data: healthCheckups });
+  } catch (error) {
+    console.error("Admin Health Checkups API error:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch health checkups.",
+    });
   }
-);
+});
 
 /* Get Lead Magnet Requests */
-app.get(
-  "/api/admin/lead-magnets",
-  authMiddleware,
-  async (req, res) => {
-    try {
-      const leadMagnets = await LeadMagnet.find()
-        .sort({ createdAt: -1 });
-
-      res.json({
-        success: true,
-        data: leadMagnets,
-      });
-    } catch (error) {
-      console.error(
-        "Admin Lead Magnets API error:",
-        error.message
-      );
-
-      res.status(500).json({
-        success: false,
-        message:
-          "Failed to fetch lead magnet requests.",
-      });
-    }
+app.get("/api/admin/lead-magnets", authMiddleware, async (req, res) => {
+  try {
+    const leadMagnets = await LeadMagnet.find().sort({ createdAt: -1 });
+    res.json({ success: true, data: leadMagnets });
+  } catch (error) {
+    console.error("Admin Lead Magnets API error:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch lead magnet requests.",
+    });
   }
-);
+});
 
-/* Connect MongoDB */
+/* Connect MongoDB and start server */
 connectDB();
 
-/* Start Server */
 app.listen(PORT, () => {
-  console.log(
-    `Server running on http://localhost:${PORT}`
-  );
+  console.log(`Server running on http://localhost:${PORT}`);
 });
