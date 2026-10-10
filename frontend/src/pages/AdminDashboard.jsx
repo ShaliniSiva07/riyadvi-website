@@ -40,27 +40,27 @@ function AdminDashboard() {
         applicationsResponse,
         healthCheckupsResponse,
         leadMagnetsResponse,
-     ] = await Promise.all([
-  fetch(`${API_URL}/api/admin/contacts`, {
-    headers,
-  }),
+      ] = await Promise.all([
+        fetch(`${API_URL}/api/admin/contacts`, {
+          headers,
+        }),
 
-  fetch(`${API_URL}/api/admin/consultations`, {
-    headers,
-  }),
+        fetch(`${API_URL}/api/admin/consultations`, {
+          headers,
+        }),
 
-  fetch(`${API_URL}/api/admin/applications`, {
-    headers,
-  }),
+        fetch(`${API_URL}/api/admin/applications`, {
+          headers,
+        }),
 
-  fetch(`${API_URL}/api/admin/health-checkups`, {
-    headers,
-  }),
+        fetch(`${API_URL}/api/admin/health-checkups`, {
+          headers,
+        }),
 
-  fetch(`${API_URL}/api/admin/lead-magnets`, {
-    headers,
-  }),
-]);
+        fetch(`${API_URL}/api/admin/lead-magnets`, {
+          headers,
+        }),
+      ]);
 
       if (
         contactsResponse.status === 401 ||
@@ -413,6 +413,10 @@ function AdminDashboard() {
                         <th className="px-6 py-5 text-sm text-gray-500">
                           Position
                         </th>
+
+                        <th className="px-6 py-5 text-sm text-gray-500">
+                          Resume
+                        </th>
                       </tr>
                     </thead>
 
@@ -437,6 +441,56 @@ function AdminDashboard() {
                           <td className="px-6 py-5 text-[#D4AF37]">
                             {item.jobTitle}
                           </td>
+
+
+                          <td className="px-6 py-5">
+                            {item.resume ? (
+                              <button
+                                onClick={async () => {
+                                  try {
+                                    const token = localStorage.getItem("adminToken");
+
+                                    const response = await fetch(
+                                      `${API_URL}/api/admin/applications/${item._id}/resume`,
+                                      {
+                                        headers: {
+                                          Authorization: `Bearer ${token}`,
+                                        },
+                                      }
+                                    );
+
+                                    if (!response.ok) {
+                                      throw new Error("Unable to download resume");
+                                    }
+
+                                    const blob = await response.blob();
+                                    const url = window.URL.createObjectURL(blob);
+                                    const link = document.createElement("a");
+
+                                    link.href = url;
+                                    link.download = `resume-${item._id}.pdf`;
+
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    link.remove();
+
+                                    window.URL.revokeObjectURL(url);
+                                  } catch (error) {
+                                    alert("Unable to download resume. Please try again.");
+                                    console.error(error);
+                                  }
+                                }}
+                                className="text-sm text-[#D4AF37] underline"
+                              >
+                                Download Resume
+                              </button>
+                            ) : (
+                              <span className="text-sm text-gray-500">
+                                No resume
+                              </span>
+                            )}
+                          </td>
+
                         </tr>
                       ))}
                     </tbody>

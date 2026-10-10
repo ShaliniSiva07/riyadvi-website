@@ -1,4 +1,5 @@
 import Hero from "../sections/Hero";
+import DigitalTransformation from "../sections/DigitalTransformation";
 import Services from "../sections/Services";
 import AboutSection from "../sections/AboutSection";
 import TechnologySection from "../sections/TechnologySection";
@@ -9,6 +10,7 @@ function Home() {
   return (
     <main>
       <Hero />
+      <DigitalTransformation />
       <Services />
       <AboutSection />
       <TechnologySection />

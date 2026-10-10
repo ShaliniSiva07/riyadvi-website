@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import PortfolioScene from "../three/PortfolioScene";
 
 const projects = [
@@ -53,6 +54,7 @@ const projects = [
 ];
 
 function PortfolioSection() {
+  const [selectedProject, setSelectedProject] = useState(0);
   return (
     <section className="bg-[#050505] px-6 py-28 text-white">
       <div className="mx-auto max-w-7xl">
@@ -82,8 +84,15 @@ function PortfolioSection() {
         <div className="mt-16 grid gap-6 md:grid-cols-2">
           {projects.map((project) => (
             <Link
-              key={project.number}
-              to={`/portfolio/${project.slug}`}
+  key={project.number}
+  to={`/portfolio/${project.slug}`}
+  onMouseEnter={() => {
+    setSelectedProject(
+      projects.findIndex(
+        (item) => item.number === project.number
+      )
+    );
+  }}
               className="group relative block overflow-hidden border border-white/10 bg-black p-8 transition duration-500 hover:border-[#D4AF37]/60"
             >
               {/* Project Number */}
@@ -119,7 +128,7 @@ function PortfolioSection() {
         </div>
 
         {/* 3D Portfolio Experience */}
-        <PortfolioScene />
+        <PortfolioScene selectedProject={selectedProject} />
 
       </div>
     </section>
